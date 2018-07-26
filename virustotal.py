@@ -14,7 +14,7 @@ params = { 'apikey': config.API_KEY }
 directory = os.fsencode(config.path)
 for f in os.listdir(directory):
 
-    if request_ctr > 4:         # 4リクエスト / 分
+    if request_ctr >= 4:         # 4リクエスト / 分
         sleep(60)
         request_ctr = 0
 
@@ -33,7 +33,7 @@ os.makedirs('report', exist_ok=True)
 for index,scan_id in enumerate(scan_id_list):
     print(str(request_ctr) + ': ' + str(scan_id))
 
-    if request_ctr > 4:         # 4リクエスト / 分
+    if request_ctr >= 4:         # 4リクエスト / 分
         sleep(60)
         request_ctr = 0
 
