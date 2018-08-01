@@ -13,6 +13,8 @@ scan_id_list = []
 params = { 'apikey': config.API_KEY }
 directory = os.fsencode(config.path)
 for f in os.listdir(directory):
+    if f.startswith(b'.'):
+        continue
 
     if request_ctr >= 4:         # 4リクエスト / 分
         sleep(60)
