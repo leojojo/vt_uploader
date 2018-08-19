@@ -1,21 +1,20 @@
 # coding: utf-8
-import os,json
+import sys,os,json
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-path = b'./report/virusshare'
 total = {}
 
 # ========== VirusTotalのjsonはおかしいので修正 ==========
-def fix_json(file):
-    file = file.replace('\'','"')
-    file = file.replace('True','true')
-    file = file.replace('False','false')
-    file = file.replace('None','null')
-    return file
-
 def fix_file(file):
+    def fix_json(file):
+        file = file.replace('\'','"')
+        file = file.replace('True','true')
+        file = file.replace('False','false')
+        file = file.replace('None','null')
+        return file
+
     with open(file, 'r') as f:
         filedata = f.read()
     filedata = fix_json(filedata)
@@ -46,13 +45,21 @@ def graph(a,b,c,d):
     plt.savefig('benign.png')
 
 # ========== ディレクトリの中全てのファイルについて ==========
-for dir in os.listdir(os.fsencode(path)):
-    for f in os.listdir(os.path.join(path,dir)):
-        fix_file(os.path.join(path,dir,f))
-        with open(os.path.join(path,dir,f), 'r') as f:
-            json_obj = json.load(f)
-            if "scans" in json_obj.keys():
-                scan_count(json_obj["scans"])
-            else:
-                continue
-print(total)
+def analyze(directory):
+    for report in os.listdir(os.fsencode(directory)):
+        path = os.path.join(os.fsencode(directory),report)
+        fix_file(path)
+        with open(path, 'r') as f:
+             json_obj = json.load(f)
+             if "scans" in json_obj.keys():
+                 scan_count(json_obj["scans"])
+             else:
+                print('failed: {0}'.format(report))
+    print(json.dumps(total, indent=2))
+
+def main():
+    for arg in sys.argv[1:]:
+        analyze(arg)
+
+if __name__ == "__main__":
+    main()
