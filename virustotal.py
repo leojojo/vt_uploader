@@ -2,15 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import sys,os,requests,json,textwrap
+from dotenv import load_dotenv
 from time import sleep
 from progressbar import ProgressBar
-try:
-    import config
-except ImportError:
-    print('cannot find config.py, see config_example.py for reference')
 
 class VirusTotalUploader:
     def __init__(self):
+        dotenv_path = join(dirname(__file__), '.env')
+        load_dotenv(dotenv_path)
+        self.API_KEY= os.environ.get('API_KEY')
         self.request_ctr = 0
         self.scan_id_list = []
         self.base_url = 'https://www.virustotal.com/vtapi/v2/file/'
@@ -18,7 +18,7 @@ class VirusTotalUploader:
     # ========== ファイルを投げる ==========
     def submit_file(self, path):
         progress = ProgressBar(0, len(os.listdir(path)))
-        params = { 'apikey': config.API_KEY }
+        params = { 'apikey': self.API_KEY }
         files = os.listdir(os.fsencode(path))
 
         for index,f in enumerate(files):
@@ -50,7 +50,7 @@ class VirusTotalUploader:
                 self.request_ctr = 0
 
             params = {
-                'apikey': config.API_KEY,
+                'apikey': self.API_KEY,
                 'resource': scan_id
               }
             headers = {
